@@ -1,0 +1,27 @@
+# --- 原資料・成果物は登録しない（著作物・個人資料のため） ---
+*.pdf
+*_要約.pptx
+可視化(Claude)/
+**/out/
+**/img/
+**/crops/
+**/ext*/
+contact.jpg
+figures.tsv
+
+# テンプレートは登録する（上の除外の例外）
+!*/assets/*.pptx
+
+# --- Python ---
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# --- OS・エディタ ---
+.DS_Store
+._*
+Thumbs.db
+.vscode/
+.idea/
+~$*
