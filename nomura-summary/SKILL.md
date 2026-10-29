@@ -106,12 +106,17 @@ description: "Only when the user explicitly types /nomura-summary: summarize a N
 ## 9. 資材と説明書の保守（Git管理）
 - 資材の正本は `/Users/hideo/claude-skills/nomura-summary/`。旧置き場所 `011_公表情報/_要約スキル資材/` は使わない。
 - 資材（テンプレート・スクリプト・手本）を変更するときは、次をまとめて行う。
-  1. 変更したファイルを `/Users/hideo/claude-skills/nomura-summary/` の該当場所に書き戻す。
+  1. クラウド側の作業コピーで変更する。GitHub `gloverhana39/claude-skills` をセッションに接続（push 権限）し、`/home/claude/claude-skills` に clone して作業する。
   2. 同じフォルダの `README.md`（取扱説明書）の該当箇所と改訂履歴、`CHANGELOG.md`、リポジトリ直下 `README.md` のスキル一覧の「最終更新」を更新する。
-  3. ユーザーに、Mac のターミナルで実行するコマンドを示す（このクラウド環境からは GitHub に書き込めないため）。
+  3. `[nomura-summary] <変更内容>` の形式でコミットし、Claude が `main` に push する。
+  4. ユーザーに、Mac で取り込むコマンドを示す。版の目印（タグ）はクラウド側から送れないため、付ける場合は同じコマンドに含める。
+     ```
+     cd ~/claude-skills && git pull && git tag -a nomura-summary/vX.Y.Z -m "<変更内容>" && git push --tags
+     ```
+  5. push が権限エラーで断られた場合は、変更したファイルを `/Users/hideo/claude-skills/` に直接書き戻し、Mac で記録・反映してもらう。
      ```
      cd ~/claude-skills && git add -A && git commit -m "[nomura-summary] <変更内容>" && git push
      ```
-     区切りのよい版では、タグも付けてもらう：`git tag -a nomura-summary/vX.Y.Z -m "..." && git push --tags`
+  - Mac の作業コピーを直接書き換えたうえで、クラウド側からも push する、という二重の反映はしない（同じ変更が二重に記録される）。
 - このSKILL.mdの内容を変えたときは、リポジトリの `SKILL.md` も同じ内容にし、ユーザーにスキルの更新保存を依頼する（Claudeの設定に保存されたスキルは自動では更新されない）。
 - 作ったデッキは取扱説明書の「作成済みのデッキ」表に追記する。

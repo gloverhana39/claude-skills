@@ -169,14 +169,16 @@
 ### 変更するときの流れ
 
 1. Claude に変更を依頼する
-   → Claude が `~/claude-skills/nomura-summary/` のファイルを直接書き換え、取扱説明書・変更履歴も更新します。
-2. Claude が示すコマンドを Mac のターミナルで実行し、GitHub に記録・反映する（例）
+   → Claude がファイルを直し、取扱説明書・変更履歴も更新したうえで、GitHub に反映します。
+2. Claude が示すコマンドを Mac のターミナルで実行し、変更を取り込む（例）
    ```
-   cd ~/claude-skills && git add -A && git commit -m "[nomura-summary] 変更内容" && git push
+   cd ~/claude-skills && git pull && git tag -a nomura-summary/v1.0.2 -m "変更内容" && git push --tags
    ```
-   ※ Claude のクラウド環境からは、あなたの GitHub に直接書き込めないため、この操作だけ Mac で行います。
-3. `SKILL.md` が変わったときは、Claude の画面に出るスキル更新の案を保存する
-   → Claude の設定に保存されたスキルは、Git とは自動では連動しないためです。
+   ※ 版の目印（タグ）だけは Claude から送れないため、取り込みと同時に Mac で付けます。
+3. `SKILL.md` が変わったときは、Claude の設定に保存されたスキルも更新する
+   → カードが表示されたら保存します。表示されない場合は、Claude が用意する zip ファイルを「カスタマイズ → Skills」からアップロードし直します（古い nomura-summary を削除してから追加）。
+
+※ Claude から GitHub への反映が権限エラーで断られたときは、Claude が Mac の `~/claude-skills` を直接書き換えます。その場合は `git add -A && git commit -m "…" && git push` で、Mac から反映します（Claude がコマンドを示します）。
 
 ### よく使う Git の操作（Mac のターミナル）
 
@@ -233,3 +235,4 @@
 | 2026-10-29 | 野村週報に対応（表紙写真の取得、積み上げ棒グラフ、週報用の手本を追加） |
 | 2026-10-29 | テンプレートからEIZOロゴを削除（「タイトルとコンテンツ」レイアウトのロゴ画像を除去） |
 | 2026-10-29 | Git/GitHub（`claude-skills` リポジトリ）での管理に移行。資材の置き場所を `~/claude-skills/nomura-summary/` に変更 |
+| 2026-10-29 | 変更の流れを実態に合わせて修正（Claude が GitHub に反映し、Mac は取り込みとタグ付けのみ） |
