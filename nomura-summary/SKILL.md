@@ -19,6 +19,7 @@ description: "Only when the user explicitly types /nomura-summary: summarize a N
   - `examples/build_cio_monthly.py`：CIO Monthly 2026年10月号（16枚、図表・写真入り）の完成例。月次・図表の多い資料の手本
   - `examples/build_weekly.py`：野村週報 2026年10月26日号（11枚）の完成例。週次資料の手本
   - `examples/build_fx_weekly.py`：国際金融為替ウィークリー 2026年10月26日号（15枚）の完成例。為替資料の手本
+  - `examples/build_n21g.py`：Nomura21 Global 2026年11月号（16枚）の完成例。銘柄入れ替えのある月次資料の手本
   - `README.md`：ユーザー向けの取扱説明書／`CHANGELOG.md`：変更履歴
 - 本文スライドは「タイトルのみ」レイアウトを使う（`Deck.slide()` が自動で選ぶ）。テンプレートからEIZOロゴは削除済みで、ロゴは入れない。
 - Macと連携していない、または上記2つのフォルダ（資料の保管先と `/Users/hideo/claude-skills`）が未接続なら、アクセスをリクエストする（どちらもパスに記号がなく、通常どおり依頼できる）。承認されなければ、デスクトップアプリの「＋」→「フォルダを追加」を案内して止まる。
@@ -79,13 +80,17 @@ description: "Only when the user explicitly types /nomura-summary: summarize a N
 - **野村週報／週刊チャート展望**（週次）
   - 8〜11枚に絞る。標準構成：表紙（表紙写真）→ 今週の結論＋前号からの変化（日経平均の節目・主要通貨の対円レート）→ オピニオン（原資料の図＋記載数値から作るグラフ）→ マーケットビュー（日本・グローバル）→ 米国・為替（指数化チャートの表の値で前号と比較）→ 今週の予定（日別カレンダー）→ 今週のトピック → 野村アナリストの眼 → マネーコラム → 用語と出典。
   - 決算発表スケジュールの一覧ページは通常は使わない。
+- **Nomura21 Global**（月次・約100ページ＋銘柄入れ替えの別紙 `n21g_meigara.pdf`）
+  - 印刷ページ番号は「PDFのページ − 1」。各ページは上下2段の図（左）＋右端の MEMO 欄と注記欄。図に「図表N」の見出しがないため `extract_figures.py` では拾えない。`pdftotext -bbox-layout` で段の見出しと「MEMO」の位置を探し、`crop()` で x 18pt〜右側の「(注」行の左端（なければ MEMO の左端）まで、下端は解説文の始まりまでを切り出す。
+  - 標準構成（15〜16枚）：表紙（表紙写真）→ 今月の結論＋前号からの変化（EPS予想・新規銘柄・日経平均予想上限・FRB／日銀の予想）→ 銘柄入れ替え（新規・削除カード、前月からの流れ、次回入れ替え日）→ 組み入れ銘柄一覧（日本株・米国株の2表、新規と前回新規を色分け）→ 米国経済・金融政策・中間選挙など → 資源 → AI投資・信用 → 米企業業績 → 日本の金融政策・財政・為替 → 日本企業業績 → 日経平均のバリュエーション → 今後の予定 → 用語と出典。
+  - 銘柄は「組み入れ銘柄」と書き、推奨とは書かない。個別銘柄ページ（巻末）は新規組み入れ銘柄の Point 見出しだけを使う。
 - **CIO Quarterly／テーマ銘柄／その他**
   - 上の原則で汎用の構成にする。銘柄リストは表にまとめ、推奨とは書かず、資料の表現をそのまま使う。
 
 ## 6. 作成手順
 1. 資材一式と対象PDF（＋前号）を取り込む。
 2. `extract_figures.py` で写真・図表を切り出し、目視で確認・修正する。使うファイルは分かりやすい名前（`photo_cover.jpg`、`fig2_1.png` など）にコピーする。
-3. 月次・図表の多い資料は `examples/build_cio_monthly.py`、週次は `examples/build_weekly.py`、為替資料は `examples/build_fx_weekly.py` を手本に `build_<シリーズ>_<号>.py` を書く（作業用のスクリプトはリポジトリに入れない）。引数は `<scriptsのdir> <テンプレート> <出力.pptx> <画像dir>`。
+3. 月次・図表の多い資料は `examples/build_cio_monthly.py`、週次は `examples/build_weekly.py`、為替資料は `examples/build_fx_weekly.py`、Nomura21 Global は `examples/build_n21g.py` を手本に `build_<シリーズ>_<号>.py` を書く（作業用のスクリプトはリポジトリに入れない）。引数は `<scriptsのdir> <テンプレート> <出力.pptx> <画像dir>`。
 4. 本文エリアは x 0.4〜9.6 in、y 0.95〜5.35 in。右下のスライド番号に重ねない。
 5. 本文は10.5〜12pt、注記は9pt以上にする。
 

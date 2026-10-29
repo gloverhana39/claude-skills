@@ -493,6 +493,8 @@ class Deck:
             for c in range(nc):
                 cell = tbl.cell(r, c)
                 val = rows[r][c]
+                if val == "" or val is None:
+                    val = " "  # 空セルは既定18ptになり行が高くなるため、空白1文字で文字サイズを効かせる
                 cell.margin_left = cell.margin_right = Inches(0.06)
                 cell.margin_top = cell.margin_bottom = Inches(0.03)
                 cell.vertical_anchor = MSO_ANCHOR.MIDDLE

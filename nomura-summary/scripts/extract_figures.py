@@ -33,7 +33,9 @@ def render(pdf, page, dpi, tmp):
 
 
 def crop(pdf, page, x0, y0, x1, y1, out, dpi=250, tmp=None):
-    tmp = tmp or os.path.dirname(out)
+    tmp = tmp or os.path.dirname(out) or "."
+    os.makedirs(tmp, exist_ok=True)
+    os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
     im = render(pdf, page, dpi, tmp)
     s = dpi / 72
     im.crop((int(x0 * s), int(y0 * s), int(x1 * s), int(y1 * s))).save(out)

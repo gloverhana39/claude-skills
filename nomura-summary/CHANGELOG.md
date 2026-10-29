@@ -1,5 +1,12 @@
 # nomura-summary 変更履歴
 
+## v1.2.0（2026-10-29）
+
+- Nomura21 Global に対応。SKILL.md に標準構成と図の切り出し方（MEMO欄・注記欄を除く）を追加
+- `nomura_deck.py`：表の空セルで行が高くなる不具合を修正
+- `extract_figures.py`：`crop()` が出力先フォルダを自動で作るよう修正
+- 手本 `examples/build_n21g.py`（Nomura21 Global 2026年11月号、16枚）を追加
+
 ## v1.1.0（2026-10-29）
 
 - 国際金融為替ウィークリーに対応。SKILL.md に為替ウィークリーの標準構成を追加
