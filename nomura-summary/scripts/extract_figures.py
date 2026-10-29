@@ -80,15 +80,37 @@ def main():
         caps = [l for l in ls if CAPTION.match(l[4])]
         subs = [c for c in caps if re.match(r"^図表\s*\d+-\d+", c[4])]
         use = subs if subs else caps
-        srcs = [l for l in ls if l[4].startswith("（出所）")]
-        for k, (x0, y0, x1, y1, txt) in enumerate(sorted(use, key=lambda c: (c[1] // 20, c[0]))):
-            left = x0 < pw / 2
-            if subs:  # 左右2枚組
-                cx0, cx1 = (18, pw / 2) if left else (pw / 2, pw - 15)
+        # 出所の行（「（出所）」「出所:」どちらの書き方にも対応）
+        srcs = [l for l in ls if re.match(r"^(（出所）|\(出所\)|出所\s*[:：])", l[4])]
+        use = sorted(use, key=lambda c: (c[1] // 20, c[0]))
+
+        def partner_of(c):
+            p = [o for o in use if o[0] != c[0] and abs(o[1] - c[1]) < 25]
+            return p[0] if p else None
+
+        def sources_of(c):
+            """その図の「出所」行（見出しより下で、左右2枚組なら近い側の列）"""
+            pt = partner_of(c)
+            return [s for s in srcs if s[1] > c[3] and (pt is None or abs(s[0] - c[0]) <= abs(s[0] - pt[0]))]
+
+        def left_edge(c):
+            # 見出しが中央寄せの資料もあるので、見出しと出所行のうち左にある方に合わせる
+            xs = [c[0]] + [s[0] for s in sources_of(c)[:1]]
+            return max(15, min(xs) - 6)
+
+        for k, cap in enumerate(use):
+            x0, y0, x1, y1, txt = cap
+            pt = partner_of(cap)
+            cx0 = left_edge(cap)
+            cx1 = (left_edge(pt) - 2) if (pt and pt[0] > x0) else pw - 15
+            below = sources_of(cap)
+            nxt = [c[1] for c in use if c[1] > y1 + 25 and (pt is None or abs(c[0] - x0) < 40)]
+            if below:
+                yb = min(s[3] for s in below)
+                if nxt and min(nxt) < yb:
+                    yb = min(nxt) - 6
             else:
-                cx0, cx1 = 18, pw - 15
-            same_col = [s for s in srcs if s[1] > y1 and ((s[0] < pw / 2) == left or not subs)]
-            yb = max([s[3] for s in same_col], default=min(ph - 30, y1 + 300))
+                yb = (min(nxt) - 6) if nxt else min(ph - 30, y1 + 300)
             name = f"fig_p{pi:02d}_{k + 1}.png"
             crop(pdf, pi, cx0, y0 - 4, cx1, yb + 4, os.path.join(outdir, name), dpi, tmp)
             rows.append((name, pi, f"{cx0:.0f},{y0 - 4:.0f},{cx1:.0f},{yb + 4:.0f}", txt[:40]))

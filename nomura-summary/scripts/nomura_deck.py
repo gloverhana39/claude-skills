@@ -414,6 +414,69 @@ class Deck:
                 s.data_labels.font.bold = True
         return ch
 
+    def line_chart(self, slide, x, y, w, h, cats, series, colors=None, title=None, number_format='0.0',
+                   legend=False, val_min=None, val_max=None, label_size=10, dashed=None, labels=True):
+        """折れ線グラフ（マーカー付き）。dashed: 破線にする系列番号のリスト（予想値など）"""
+        from pptx.enum.chart import XL_MARKER_STYLE, XL_LEGEND_POSITION
+        cd = CategoryChartData()
+        cd.categories = cats
+        for name, vals in series:
+            cd.add_series(name, vals)
+        gf = slide.shapes.add_chart(XL_CHART_TYPE.LINE_MARKERS, Inches(x), Inches(y), Inches(w), Inches(h), cd)
+        ch = gf.chart
+        ch.font.name = FONT
+        ch.font.size = Pt(10)
+        ch.has_legend = legend
+        if legend:
+            ch.legend.include_in_layout = False
+            ch.legend.position = XL_LEGEND_POSITION.TOP
+            ch.legend.font.size = Pt(10)
+        if title:
+            ch.has_title = True
+            ch.chart_title.text_frame.text = title
+            for r in ch.chart_title.text_frame.paragraphs[0].runs:
+                self._font(r, 11, C.SUB, bold=True)
+        else:
+            ch.has_title = False
+        va = ch.value_axis
+        va.has_major_gridlines = True
+        va.major_gridlines.format.line.color.rgb = _rgb("E0E0E0")
+        va.format.line.fill.background()
+        va.tick_labels.font.size = Pt(9)
+        va.tick_labels.font.color.rgb = _rgb(C.GRAY)
+        if val_min is not None:
+            va.minimum_scale = val_min
+        if val_max is not None:
+            va.maximum_scale = val_max
+        ca = ch.category_axis
+        ca.tick_labels.font.size = Pt(10)
+        ca.tick_labels.font.color.rgb = _rgb(C.SUB)
+        ca.format.line.color.rgb = _rgb(C.LINE)
+        from pptx.enum.dml import MSO_LINE_DASH_STYLE
+        for i, s in enumerate(ch.plots[0].series):
+            col = (colors or [C.RED])[i % len(colors or [C.RED])]
+            s.format.line.color.rgb = _rgb(col)
+            s.format.line.width = Pt(2.25)
+            s.smooth = False
+            s.marker.style = XL_MARKER_STYLE.CIRCLE
+            s.marker.size = 7
+            s.marker.format.fill.solid()
+            s.marker.format.fill.fore_color.rgb = _rgb(col)
+            s.marker.format.line.color.rgb = _rgb(col)
+            if dashed and i in dashed:
+                s.format.line.dash_style = MSO_LINE_DASH_STYLE.DASH
+            if labels:
+                dl = s.data_labels
+                dl.show_value = True
+                dl.number_format = number_format
+                dl.number_format_is_linked = False
+                dl.position = XL_LABEL_POSITION.ABOVE
+                dl.font.size = Pt(label_size)
+                dl.font.bold = True
+                dl.font.name = FONT
+                dl.font.color.rgb = _rgb(col)
+        return ch
+
     def table(self, slide, x, y, w, rows, col_w, row_h=0.32, header_fill=C.NAVY, size=10, header_size=10,
               zebra=True, aligns=None):
         nr, nc = len(rows), len(rows[0])

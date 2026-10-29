@@ -14,10 +14,11 @@ description: "Only when the user explicitly types /nomura-summary: summarize a N
 - 資料の保管先（ユーザーのMac）：`/Users/hideo/disk01/02_Assets(資産)/01_資産運用/01_野村證券_全般/011_公表情報`
 - スキル資材（Git管理）：`/Users/hideo/claude-skills/nomura-summary/`（GitHub `gloverhana39/claude-skills` の Mac 上の作業コピー）
   - `assets/FreeForm_Form16-10(メイリオ).pptx`：必ず使うテンプレート（16:10、白地、メイリオ。EIZOロゴは削除済み）
-  - `scripts/nomura_deck.py`：作図ヘルパー（python-pptx）。表紙（写真付き）、本文スライド、カード、KPI、フロー、表、CIO VIEWマトリクス、写真・図表の配置（`image_fill` / `image_fit`）、ネイティブ棒グラフ（縦・横・積み上げ、系列ごとのラベル色）を描く
-  - `scripts/extract_figures.py`：原資料PDFから写真と図表を切り出す
+  - `scripts/nomura_deck.py`：作図ヘルパー（python-pptx）。表紙（写真付き）、本文スライド、カード、KPI、フロー、表、CIO VIEWマトリクス、写真・図表の配置（`image_fill` / `image_fit`）、ネイティブの棒グラフ（縦・横・積み上げ、系列ごとのラベル色）と折れ線グラフ（`line_chart`、予想値の推移など）を描く
+  - `scripts/extract_figures.py`：原資料PDFから写真と図表を切り出す（左右2枚組の図は見出しの位置で自動的に分け、下端は直下の「出所」行で切る）
   - `examples/build_cio_monthly.py`：CIO Monthly 2026年10月号（16枚、図表・写真入り）の完成例。月次・図表の多い資料の手本
   - `examples/build_weekly.py`：野村週報 2026年10月26日号（11枚）の完成例。週次資料の手本
+  - `examples/build_fx_weekly.py`：国際金融為替ウィークリー 2026年10月26日号（15枚）の完成例。為替資料の手本
   - `README.md`：ユーザー向けの取扱説明書／`CHANGELOG.md`：変更履歴
 - 本文スライドは「タイトルのみ」レイアウトを使う（`Deck.slide()` が自動で選ぶ）。テンプレートからEIZOロゴは削除済みで、ロゴは入れない。
 - Macと連携していない、または上記2つのフォルダ（資料の保管先と `/Users/hideo/claude-skills`）が未接続なら、アクセスをリクエストする（どちらもパスに記号がなく、通常どおり依頼できる）。承認されなければ、デスクトップアプリの「＋」→「フォルダを追加」を案内して止まる。
@@ -73,6 +74,8 @@ description: "Only when the user explicitly types /nomura-summary: summarize a N
 - **グローバル為替・金利展望／国際金融為替（M&W）**
   - 通貨別の予想値・レンジを表とグラフにする。
   - 原資料のチャートを使い、金融政策と金利差から為替に至る因果をフロー図で示す。
+  - 国際金融為替ウィークリー（約40ページ）の標準構成（13〜15枚）：表紙 → 今週の結論＋前号からの変化（ドル円の見出し・想定レンジ・直近値・予想）→ 予想（ドル円予想の折れ線＋主要通貨の対円予想表。前号と予想値を比較）→ 今週の政策イベント表（野村・市場・前回。野村と市場が異なる項目を赤字）→ ドル円の論点ごとに図表2枚＋要点（3〜4枚）→ 円高・円安要因の綱引き図と結論 → フローモニター → ユーロ → 英ポンド → 資源国通貨（豪・加・NZ）を3列で → 新興国（韓・トルコ・ブラジルなど）を3列で → 用語と出典。
+  - 巻末の為替予想表（対ドル・対円）は数値を読み取って表とグラフにする。表紙に写真はないので、写真なしの表紙にする。
 - **野村週報／週刊チャート展望**（週次）
   - 8〜11枚に絞る。標準構成：表紙（表紙写真）→ 今週の結論＋前号からの変化（日経平均の節目・主要通貨の対円レート）→ オピニオン（原資料の図＋記載数値から作るグラフ）→ マーケットビュー（日本・グローバル）→ 米国・為替（指数化チャートの表の値で前号と比較）→ 今週の予定（日別カレンダー）→ 今週のトピック → 野村アナリストの眼 → マネーコラム → 用語と出典。
   - 決算発表スケジュールの一覧ページは通常は使わない。
@@ -82,7 +85,7 @@ description: "Only when the user explicitly types /nomura-summary: summarize a N
 ## 6. 作成手順
 1. 資材一式と対象PDF（＋前号）を取り込む。
 2. `extract_figures.py` で写真・図表を切り出し、目視で確認・修正する。使うファイルは分かりやすい名前（`photo_cover.jpg`、`fig2_1.png` など）にコピーする。
-3. 月次・図表の多い資料は `examples/build_cio_monthly.py`、週次は `examples/build_weekly.py` を手本に `build_<シリーズ>_<号>.py` を書く（作業用のスクリプトはリポジトリに入れない）。引数は `<scriptsのdir> <テンプレート> <出力.pptx> <画像dir>`。
+3. 月次・図表の多い資料は `examples/build_cio_monthly.py`、週次は `examples/build_weekly.py`、為替資料は `examples/build_fx_weekly.py` を手本に `build_<シリーズ>_<号>.py` を書く（作業用のスクリプトはリポジトリに入れない）。引数は `<scriptsのdir> <テンプレート> <出力.pptx> <画像dir>`。
 4. 本文エリアは x 0.4〜9.6 in、y 0.95〜5.35 in。右下のスライド番号に重ねない。
 5. 本文は10.5〜12pt、注記は9pt以上にする。
 
