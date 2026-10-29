@@ -1,5 +1,11 @@
 # nomura-summary 変更履歴
 
+## v1.0.1（2026-10-29）
+
+- 資材の置き場所を `011_公表情報/_要約スキル資材/` から `~/claude-skills/nomura-summary/`（Git管理）に変更
+- SKILL.md の資材パスをフォルダ構成（scripts/・assets/・examples/）に合わせて更新
+- SKILL.md・取扱説明書に Git での更新手順を追加
+
 ## v1.0.0（2026-10-29）
 
 最初の版。

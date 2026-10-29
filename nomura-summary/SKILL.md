@@ -12,15 +12,15 @@ description: "Only when the user explicitly types /nomura-summary: summarize a N
 
 ## 1. 前提と置き場所
 - 資料の保管先（ユーザーのMac）：`/Users/hideo/disk01/02_Assets(資産)/01_資産運用/01_野村證券_全般/011_公表情報`
-- スキル資材：上記フォルダ内の `_要約スキル資材/`
-  - `FreeForm_Form16-10(メイリオ).pptx`：必ず使うテンプレート（16:10、白地、メイリオ。EIZOロゴは削除済み）
-  - `nomura_deck.py`：作図ヘルパー（python-pptx）。表紙（写真付き）、本文スライド、カード、KPI、フロー、表、CIO VIEWマトリクス、写真・図表の配置（`image_fill` / `image_fit`）、ネイティブ棒グラフ（縦・横・積み上げ、系列ごとのラベル色）を描く
-  - `extract_figures.py`：原資料PDFから写真と図表を切り出す
-  - `example_build_cio_monthly.py`：CIO Monthly 2026年10月号（16枚、図表・写真入り）の完成例。月次・図表の多い資料の手本
-  - `example_build_weekly.py`：野村週報 2026年10月26日号（11枚）の完成例。週次資料の手本
-  - `nomura-summary_取扱説明書.md`：ユーザー向けの取扱説明書
+- スキル資材（Git管理）：`/Users/hideo/claude-skills/nomura-summary/`（GitHub `gloverhana39/claude-skills` の Mac 上の作業コピー）
+  - `assets/FreeForm_Form16-10(メイリオ).pptx`：必ず使うテンプレート（16:10、白地、メイリオ。EIZOロゴは削除済み）
+  - `scripts/nomura_deck.py`：作図ヘルパー（python-pptx）。表紙（写真付き）、本文スライド、カード、KPI、フロー、表、CIO VIEWマトリクス、写真・図表の配置（`image_fill` / `image_fit`）、ネイティブ棒グラフ（縦・横・積み上げ、系列ごとのラベル色）を描く
+  - `scripts/extract_figures.py`：原資料PDFから写真と図表を切り出す
+  - `examples/build_cio_monthly.py`：CIO Monthly 2026年10月号（16枚、図表・写真入り）の完成例。月次・図表の多い資料の手本
+  - `examples/build_weekly.py`：野村週報 2026年10月26日号（11枚）の完成例。週次資料の手本
+  - `README.md`：ユーザー向けの取扱説明書／`CHANGELOG.md`：変更履歴
 - 本文スライドは「タイトルのみ」レイアウトを使う（`Deck.slide()` が自動で選ぶ）。テンプレートからEIZOロゴは削除済みで、ロゴは入れない。
-- Macと連携していない、またはフォルダが未接続なら、上記フォルダへのアクセスをリクエストする（パスに記号がなく、通常どおり依頼できる）。承認されなければ、デスクトップアプリの「＋」→「フォルダを追加」を案内して止まる。
+- Macと連携していない、または上記2つのフォルダ（資料の保管先と `/Users/hideo/claude-skills`）が未接続なら、アクセスをリクエストする（どちらもパスに記号がなく、通常どおり依頼できる）。承認されなければ、デスクトップアプリの「＋」→「フォルダを追加」を案内して止まる。
 - device_bash が使えない環境では、device_stage_files で資料と資材をワークスペースに取り込み、作業後に device_commit_files で書き戻す。
 
 ## 2. 対象資料を決める
@@ -32,7 +32,7 @@ description: "Only when the user explicitly types /nomura-summary: summarize a N
 ## 3. 読み取りと素材の切り出し
 - テキストは `pdftotext`（-layout なし）で抽出する。段組みで順序が崩れるので、文脈で読み直す。
 - **図で表現された判断は、必ずページ画像で確認する**（pdftoppm -r 110 で描画して目視）。例：CIO VIEW のドット位置、前月の点線丸と矢印、マップの象限。PDFの印刷ページ番号とファイル上のページ番号はずれることがある。
-- **写真と図表を切り出す**：`python3 extract_figures.py <資料.pdf> <出力dir>`
+- **写真と図表を切り出す**：`python3 scripts/extract_figures.py <資料.pdf> <出力dir>`
   - 出力される `contact.jpg` を必ず目視し、切れ・はみ出しがあれば `crop()` で座標を直して切り直す。
   - 「図表N」の見出しがないグラフ（例：「国内株式の4局面とEPS」、スプレッド推移、ブレークイーブンインフレ率、巻末の「1年間の主要資産の推移」）は自動では拾えない。ページを描画して位置を確かめ、`crop()` で切り出す。
   - 横長の装飾帯や小さなアイコンは使わない。
@@ -82,7 +82,7 @@ description: "Only when the user explicitly types /nomura-summary: summarize a N
 ## 6. 作成手順
 1. 資材一式と対象PDF（＋前号）を取り込む。
 2. `extract_figures.py` で写真・図表を切り出し、目視で確認・修正する。使うファイルは分かりやすい名前（`photo_cover.jpg`、`fig2_1.png` など）にコピーする。
-3. 月次・図表の多い資料は `example_build_cio_monthly.py`、週次は `example_build_weekly.py` を手本に `build_<シリーズ>_<号>.py` を書く。引数は `<資材dir> <テンプレート> <出力.pptx> <画像dir>`。
+3. 月次・図表の多い資料は `examples/build_cio_monthly.py`、週次は `examples/build_weekly.py` を手本に `build_<シリーズ>_<号>.py` を書く（作業用のスクリプトはリポジトリに入れない）。引数は `<scriptsのdir> <テンプレート> <出力.pptx> <画像dir>`。
 4. 本文エリアは x 0.4〜9.6 in、y 0.95〜5.35 in。右下のスライド番号に重ねない。
 5. 本文は10.5〜12pt、注記は9pt以上にする。
 
@@ -103,7 +103,15 @@ description: "Only when the user explicitly types /nomura-summary: summarize a N
 - ファイル名：`<資料名>(<号>)_要約.pptx`
 - 返答は短くする。対象号、枚数、今号の要点1〜2行、保存先を伝え、ファイルも送る。
 
-## 9. 資材と説明書の保守
-- 資材（テンプレート・スクリプト・手本）を変更したら、必ず `_要約スキル資材/` に書き戻し、`nomura-summary_取扱説明書.md` の該当箇所と改訂履歴も同時に更新する。
-- このSKILL.mdの内容を変えたときは、ユーザーにスキルの更新保存を依頼する（Claudeの設定に保存されたスキルは自動では更新されない）。
+## 9. 資材と説明書の保守（Git管理）
+- 資材の正本は `/Users/hideo/claude-skills/nomura-summary/`。旧置き場所 `011_公表情報/_要約スキル資材/` は使わない。
+- 資材（テンプレート・スクリプト・手本）を変更するときは、次をまとめて行う。
+  1. 変更したファイルを `/Users/hideo/claude-skills/nomura-summary/` の該当場所に書き戻す。
+  2. 同じフォルダの `README.md`（取扱説明書）の該当箇所と改訂履歴、`CHANGELOG.md`、リポジトリ直下 `README.md` のスキル一覧の「最終更新」を更新する。
+  3. ユーザーに、Mac のターミナルで実行するコマンドを示す（このクラウド環境からは GitHub に書き込めないため）。
+     ```
+     cd ~/claude-skills && git add -A && git commit -m "[nomura-summary] <変更内容>" && git push
+     ```
+     区切りのよい版では、タグも付けてもらう：`git tag -a nomura-summary/vX.Y.Z -m "..." && git push --tags`
+- このSKILL.mdの内容を変えたときは、リポジトリの `SKILL.md` も同じ内容にし、ユーザーにスキルの更新保存を依頼する（Claudeの設定に保存されたスキルは自動では更新されない）。
 - 作ったデッキは取扱説明書の「作成済みのデッキ」表に追記する。
