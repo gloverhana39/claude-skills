@@ -200,6 +200,7 @@
 | 資料 | 枚数 | 保存先 |
 |---|---|---|
 | Nomura CIO Monthly 2026年10月号 | 16 | `CIO_Monthly/2026/解説CIO_Monthly(2026年10月号)/可視化(Claude)/` |
+| Nomura CIO Monthly 2026年9月号（前号8月号と比較） | 14 | `CIO_Monthly/2026/解説CIO_Monthly(2026年09月号)/可視化(Claude)/` |
 | 野村週報 2026年10月26日号（第4028号） | 11 | `野村週報/2026/可視化(Claude)/` |
 | 国際金融為替ウィークリー 2026年10月26日 | 15 | `国際金融為替M&W/Weekly/可視化(Claude)/` |
 | Nomura21 Global 2026年11月号 | 16 | `Nomura21_Global/2026年11月/可視化(Claude)/` |
