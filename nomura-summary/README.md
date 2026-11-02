@@ -199,6 +199,7 @@
 
 | 資料 | 枚数 | 保存先 |
 |---|---|---|
+| Nomura CIO Quarterly 2026年11月～2027年1月号（前号8～10月号と比較） | 12 | `CIO_Quarterly/2026/CIO Quarterly(2026年11～2027年01月号)/可視化(Claude)/` |
 | Nomura CIO Monthly 2026年11月号（前号10月号と比較） | 14 | `CIO_Monthly/2026/解説CIO_Monthly(2026年11月号)/可視化(Claude)/` |
 | Nomura CIO Monthly 2026年10月号 | 16 | `CIO_Monthly/2026/解説CIO_Monthly(2026年10月号)/可視化(Claude)/` |
 | Nomura CIO Monthly 2026年9月号（前号8月号と比較） | 14 | `CIO_Monthly/2026/解説CIO_Monthly(2026年09月号)/可視化(Claude)/` |
